@@ -3,7 +3,7 @@
 // Вариант 6: Для заданной точки и треугольника на плоскости определить,
 //            принадлежит ли точка треугольнику.
 // Язык: C#
-// Автор: Студент группы 445, Сафонова Елена Андреевна. 2026 год.
+// Автор: Студент группы XXXX, Фамилия Имя Отчество. 2024 год.
 
 using System;
 using System.Globalization;
@@ -17,6 +17,42 @@ namespace rps1
     /// </summary>
     class Program
     {
+        // Количество координат вершины треугольника в файле (xA yA xB yB xC yC)
+        private const int TriangleCoordCount = 6;
+
+        // Количество координат точки в файле (xP yP)
+        private const int PointCoordCount = 2;
+
+        // Минимальное количество строк во входном файле
+        private const int MinFileLineCount = 2;
+
+        // Индекс строки с данными треугольника во входном файле
+        private const int TriangleLineIndex = 0;
+
+        // Индекс строки с данными точки во входном файле
+        private const int PointLineIndex = 1;
+
+        // Номер строки треугольника для сообщений об ошибках (1-based)
+        private const int TriangleLineNumber = 1;
+
+        // Номер строки точки для сообщений об ошибках (1-based)
+        private const int PointLineNumber = 2;
+
+        // Индексы координат вершины A в строке файла
+        private const int AxIndex = 0;
+        private const int AyIndex = 1;
+
+        // Индексы координат вершины B в строке файла
+        private const int BxIndex = 2;
+        private const int ByIndex = 3;
+
+        // Индексы координат вершины C в строке файла
+        private const int CxIndex = 4;
+        private const int CyIndex = 5;
+
+        // Индексы координат точки P в строке файла
+        private const int PxIndex = 0;
+        private const int PyIndex = 1;
         static void Main(string[] args)
         {
             PrintWelcome();
@@ -60,7 +96,7 @@ namespace rps1
             Console.WriteLine("╔══════════════════════════════════════════════════════════╗");
             Console.WriteLine("║     Практическая работа №1. Алгоритмы и структуры данных ║");
             Console.WriteLine("║  Вариант 6: Принадлежность точки треугольнику.           ║");
-            Console.WriteLine("║  Автор: Студент группы 445, Сафонова Елена Андреевна.    ║");
+            Console.WriteLine("║  Автор: Студент группы XXXX, Фамилия Имя Отчество.       ║");
             Console.WriteLine("║  Задача: по заданным координатам треугольника и точки    ║");
             Console.WriteLine("║  определить, лежит ли точка внутри треугольника,         ║");
             Console.WriteLine("║  на его границе или снаружи.                             ║");
@@ -114,14 +150,14 @@ namespace rps1
             {
                 string[] lines = File.ReadAllLines(inputPath);
 
-                if (lines.Length < 2)
+                if (lines.Length < MinFileLineCount)
                     throw new FormatException(
                         "Файл должен содержать не менее 2 строк:\n" +
                         "  Строка 1: x_A y_A x_B y_B x_C y_C\n" +
                         "  Строка 2: x_P y_P");
 
-                Triangle triangle = ParseTriangleFromLine(lines[0], lineNumber: 1);
-                Point2D point = ParsePointFromLine(lines[1], lineNumber: 2);
+                Triangle triangle = ParseTriangleFromLine(lines[TriangleLineIndex], lineNumber: TriangleLineNumber);
+                Point2D point = ParsePointFromLine(lines[PointLineIndex], lineNumber: PointLineNumber);
 
                 Console.WriteLine($"Треугольник: {triangle}");
                 Console.WriteLine($"Точка      : {point}");
@@ -214,7 +250,7 @@ namespace rps1
 
             Triangle triangle = new Triangle(a, b, c);
 
-            if (triangle.SignedArea() == 0)
+            if (Math.Abs(triangle.SignedArea()) < PointInTriangleChecker.DegeneracyEpsilon)
             {
                 Console.WriteLine("Предупреждение: вершины коллинеарны — треугольник вырожден.");
             }
@@ -334,11 +370,11 @@ namespace rps1
         /// <param name="lineNumber">Номер строки (для сообщений об ошибках).</param>
         static Triangle ParseTriangleFromLine(string line, int lineNumber)
         {
-            double[] nums = ParseDoubles(line, lineNumber, expected: 6);
+            double[] nums = ParseDoubles(line, lineNumber, expected: TriangleCoordCount);
             return new Triangle(
-                new Point2D(nums[0], nums[1]),
-                new Point2D(nums[2], nums[3]),
-                new Point2D(nums[4], nums[5]));
+                new Point2D(nums[AxIndex], nums[AyIndex]),
+                new Point2D(nums[BxIndex], nums[ByIndex]),
+                new Point2D(nums[CxIndex], nums[CyIndex]));
         }
 
         /// <summary>
@@ -349,8 +385,8 @@ namespace rps1
         /// <param name="lineNumber">Номер строки (для сообщений об ошибках).</param>
         static Point2D ParsePointFromLine(string line, int lineNumber)
         {
-            double[] nums = ParseDoubles(line, lineNumber, expected: 2);
-            return new Point2D(nums[0], nums[1]);
+            double[] nums = ParseDoubles(line, lineNumber, expected: PointCoordCount);
+            return new Point2D(nums[PxIndex], nums[PyIndex]);
         }
 
         /// <summary>

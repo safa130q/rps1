@@ -5,6 +5,7 @@
 // Автор: Студент группы 445, Сафонова Елена Андреевна. 2026 год.
 
 using System;
+using rps1.core;
 
 namespace rps1.core
 {
@@ -31,8 +32,8 @@ namespace rps1.core
     /// </summary>
     public static class PointInTriangleChecker
     {
-        // Погрешность для сравнения вещественных чисел
-        private const double Epsilon = 1e-10;
+        // Погрешность для сравнения вещественных чисел (используется также в Program.cs)
+        public const double DegeneracyEpsilon = 1e-10;
 
         /// <summary>
         /// Определяет положение точки P относительно треугольника ABC.
@@ -56,18 +57,18 @@ namespace rps1.core
         {
             // Проверка вырожденности треугольника
             double area = triangle.SignedArea();
-            if (Math.Abs(area) < Epsilon)
+            if (Math.Abs(area) < DegeneracyEpsilon)
                 return PointPosition.DegenerateTriangle;
 
             double d1 = CrossSign(point, triangle.A, triangle.B);
             double d2 = CrossSign(point, triangle.B, triangle.C);
             double d3 = CrossSign(point, triangle.C, triangle.A);
 
-            bool hasNeg = (d1 < -Epsilon) || (d2 < -Epsilon) || (d3 < -Epsilon);
-            bool hasPos = (d1 > Epsilon) || (d2 > Epsilon) || (d3 > Epsilon);
-            bool hasZero = (Math.Abs(d1) <= Epsilon) ||
-                           (Math.Abs(d2) <= Epsilon) ||
-                           (Math.Abs(d3) <= Epsilon);
+            bool hasNeg = (d1 < -DegeneracyEpsilon) || (d2 < -DegeneracyEpsilon) || (d3 < -DegeneracyEpsilon);
+            bool hasPos = (d1 > DegeneracyEpsilon) || (d2 > DegeneracyEpsilon) || (d3 > DegeneracyEpsilon);
+            bool hasZero = (Math.Abs(d1) <= DegeneracyEpsilon) ||
+                           (Math.Abs(d2) <= DegeneracyEpsilon) ||
+                           (Math.Abs(d3) <= DegeneracyEpsilon);
 
             // Если знаки d1, d2, d3 и положительные, и отрицательные — точка снаружи
             if (hasNeg && hasPos)
